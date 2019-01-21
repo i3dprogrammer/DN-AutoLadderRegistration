@@ -19,7 +19,7 @@ namespace AutoLadderRegistration.Packets
             firstTimer = true;
             List<Packet> list = new List<Packet>();
             list.Add(new Packet(0x01, 0x01,
-                new byte[] { 0x5B, 0x06, 0x01, 0x01, 0x00, 0x16, 0x05 })); //Request Dragon Nest Server Info
+                new byte[] { 0x5B, 0x06, 0x01, 0x01, 0x00, 0x53, 0x08 })); //Request Dragon Nest Server Info
 
             Task.Run(() =>
             {
@@ -69,6 +69,14 @@ namespace AutoLadderRegistration.Packets
             return new List<Packet>() { p };
         }
 
+        public static Packet On2ndPasswordCheck(Packet packet)
+        {
+            Packet p = new Packet(0x01, 0x05);
+            for (int i = 0; i < 20; i++)
+                p.WriteUInt8(0x00);
+            return p;
+        }
+
         public static List<Packet> OnCharList(Packet packet)
         {
             Task.Run(() =>
@@ -78,11 +86,13 @@ namespace AutoLadderRegistration.Packets
                 Globals.MainWindow.cmb_chars.Items.Clear();
                 Globals.MainWindow.button2.Enabled = true;
             });
-            packet.ReadUInt32(); //unk
+            packet.ReadUInt8Array(0x05); //unk
             var maxLevelCharsCount = packet.ReadUInt32(); //unk
             var heroLevel = packet.ReadUInt32();
             var totalFreeChars = packet.ReadUInt8();
             var totalCreatedChars = packet.ReadUInt8();
+            uint charID = 0;
+            Console.WriteLine($"Chars {totalCreatedChars}/{totalFreeChars}");
             for (int i = 0; i < totalCreatedChars; i++)
             {
                 packet.ReadUInt8(); //01 - Deletion maybe?
@@ -96,18 +106,21 @@ namespace AutoLadderRegistration.Packets
                     nameBytes.Add((byte)b);
                 }
                 var name = Encoding.ASCII.GetString(nameBytes.ToArray());
-                var charID = packet.ReadUInt32();
+                charID = packet.ReadUInt32();
                 packet.ReadUInt32();
                 var charLevel = packet.ReadUInt8();
                 var bytes2 = packet.ReadUInt8Array(0x105);
                 Console.WriteLine($"#{charID} {Encoding.ASCII.GetString(nameBytes.ToArray())} - Level {charLevel}");
-                Globals.MainWindow.CharList.Add(charID);
-                Globals.MainWindow.cmb_chars.Items.Add($"#{charLevel.ToString().PadLeft(2, '0')} - {name}");
+                Task.Run(() =>
+                {
+                    Globals.MainWindow.CharList.Add(charID);
+                    Globals.MainWindow.cmb_chars.Items.Add($"#{charLevel.ToString().PadLeft(2, '0')} - {name}");
+                });
             }
 
-            var p = new Packet(0x01, 0x05); //Request channels list
-            p.WriteUInt32(Globals.MainWindow.CharList.Last());
-            p.WriteUInt32Array(new uint[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
+            var p = new Packet(0x01, 0x06); //Request channels list
+            p.WriteUInt32(charID);
+            p.WriteUInt8Array(new byte[] { 0x00, 0x00, 0x00, 0x00 });
             return new List<Packet>() { p };
         }
 
@@ -120,26 +133,25 @@ namespace AutoLadderRegistration.Packets
             });
 
             packet.ReadUInt32();
-            packet.ReadUInt8();
             var channelCount = packet.ReadUInt8();
 
-
-            var p = new Packet(0x01, 0x08);
+            var p = new Packet(0x01, 0x09);
             p.WriteUInt32(packet.ReadUInt32()); //Always join the 1st server
             list.Add(p);
 
-            list.Add(new Packet(0x01, 0x0D, new byte[] { 0x01 }));
+            list.Add(new Packet(0x01, 0x0E, new byte[] { 0x01 }));
 
             return list;
         }
 
         public static void RegisterLoginServerDispatches(Context context)
         {
-            context.PacketDispatcher.Register(0x0217, OnConnectionSucceed, false);
-            context.PacketDispatcher.Register(0x0102, OnLoginResponse, false);
-            context.PacketDispatcher.Register(0x0103, OnServerListResponse, false);
-            context.PacketDispatcher.Register(0x0104, OnCharList, false);
-            context.PacketDispatcher.Register(0x0105, OnChannelsResponse, false);
+            context.PacketDispatcher.Register(0x0217, x => OnConnectionSucceed(x));
+            context.PacketDispatcher.Register(0x0102, x => OnLoginResponse(x));
+            context.PacketDispatcher.Register(0x0103, x => OnServerListResponse(x));
+            context.PacketDispatcher.Register(0x0104, x => OnCharList(x));
+            context.PacketDispatcher.Register(0x0105, x => OnChannelsResponse(x));
+            context.PacketDispatcher.Register(0x0115, x => On2ndPasswordCheck(x));
         }
     }
 }

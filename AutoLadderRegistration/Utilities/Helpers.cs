@@ -32,11 +32,11 @@ namespace AutoLadderRegistration.Utilities
             p.WriteFixedAscii(password, 21);
             p.WriteUInt8(0x00);
             p.WriteUInt16(0x19);
-            p.WriteUInt8Array(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x01, 0x7C, 0x00 });
+            p.WriteUInt8Array(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x01, 0x96, 0x00 });
             p.WriteFixedAscii(ip, 22);
             p.WriteUInt16(0x19);
             p.WriteUInt32(0x00);
-            p.WriteUInt8Array(new byte[] { 0x8B, 0x7C, 0x49, 0x00, 0x00 });
+            p.WriteUInt8Array(new byte[] { 0x8B, 0x96, 0x49, 0x00, 0x00 });
             p.WriteFixedAscii(mac, 20);
             return p;
         }

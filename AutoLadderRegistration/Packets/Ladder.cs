@@ -36,9 +36,9 @@ namespace AutoLadderRegistration.Packets
 
         public static void RegisterLadderDispatches(Context context)
         {
-            context.PacketDispatcher.Register(0x134A, Step1Ladder, false);
-            context.PacketDispatcher.Register(0x134B, Step2Ladder, false);
-            context.PacketDispatcher.Register(0x1303, Step3Ladder, false);
+            context.PacketDispatcher.Register(0x134A, (Func<Packet, List<Packet>>)Step1Ladder);
+            context.PacketDispatcher.Register(0x134B, (Func<Packet, List<Packet>>)Step2Ladder);
+            context.PacketDispatcher.Register(0x1303, (Func<Packet, List<Packet>>)Step3Ladder);
         }
     }
 }

@@ -31,16 +31,14 @@ namespace AutoLadderRegistration.DTO.Character
             item.Count = p.ReadUInt16();
             p.ReadUInt8Array(0x1D);
 
-            if (Resources.ItemTable.CheckTableItemExists(item.ItemID))
+            try
             {
-                try
-                {
-                    item.Name = Resources.ItemTable.GetItemTableFullName(item.ItemID);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
-                }
+                item.Name = Resources.GameTables.GetTableEntryFullName(item.ItemID);
+                Console.WriteLine("#" + item.ItemID + " - " + item.Name);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
             }
 
             if (!Items.ContainsKey(item.Position))

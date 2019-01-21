@@ -8,8 +8,9 @@ namespace AutoLadderRegistration
 {
     class Opcodes
     {
-        public const ushort INVENTORY_ITEMS = 0x0701;
-        public const ushort STORAGE_ITEMS = 0x70E;
+        public const ushort INVENTORY_ITEMS_LIST = 0x0701;
+        public const ushort PROFILE_ITEMS_LIST = 0x0703;
+        public const ushort STORAGE_ITEMS_LIST = 0x070E;
         public const ushort FRIEND_LIST = 0x0F01;
 
         public const ushort SOCK_CONNECTED = 0x0217;

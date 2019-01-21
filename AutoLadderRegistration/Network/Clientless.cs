@@ -70,7 +70,7 @@ namespace AutoLadderRegistration.Network
                         if (!ignoredOpcodes.ToList().Exists(x => x.Key == packet.Opcode1 && x.Value == packet.Opcode2))
                             Utility.Hexdump(packet, true);
 
-                        foreach (var p in context.PacketDispatcher.CheckDispatch(packet))
+                        foreach (var p in context.PacketDispatcher.CheckPacketDispatches(packet))
                             SendTCPPacket(p);
 
                         if (packet.Opcode1 == 0x02 && packet.Opcode2 == 0x01) // Start new TCP connection

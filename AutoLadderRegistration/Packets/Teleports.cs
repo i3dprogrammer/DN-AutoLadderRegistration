@@ -12,14 +12,14 @@ namespace AutoLadderRegistration.Packets
     {
         static int semiCounter = 0;
 
-        public static List<Packet> On0202Echo(Packet packet)
+        public static Packet On0202Echo(Packet packet)
         {
-            return new List<Packet>() { new Packet(0x02, 0x02, new byte[] { 0x01, 0x00 }) };
+            return new Packet(0x02, 0x02, new byte[] { 0x01, 0x00 });
         }
 
-        public static List<Packet> On0301Echo(Packet packet)
+        public static Packet On0301Echo(Packet packet)
         {
-            return new List<Packet>() { new Packet(0x03, 0x01) };
+            return new Packet(0x03, 0x01);
         }
 
         public static List<Packet> OnCitySemiLoad(Packet packet)
@@ -85,12 +85,12 @@ namespace AutoLadderRegistration.Packets
 
         public static void RegisterTeleportDispatches(Context context)
         {
-            context.PacketDispatcher.Register(0x0202, On0202Echo, false);
-            context.PacketDispatcher.Register(0x0301, On0301Echo, false);
-            context.PacketDispatcher.Register(0x0307, OnCitySemiLoad, false);
-            context.PacketDispatcher.Register(0x0768, OnTeleportSemiLoad, false);
-            context.PacketDispatcher.Register(0x0D0F, OnAlmostLoad, false);
-            context.PacketDispatcher.Register(0x1F03, OnFullLoad, false);
+            context.PacketDispatcher.Register(0x0202, (Func<Packet, Packet>)On0202Echo);
+            context.PacketDispatcher.Register(0x0301, (Func<Packet, Packet>)On0301Echo);
+            context.PacketDispatcher.Register(0x0307, (Func<Packet, List<Packet>>)OnCitySemiLoad);
+            context.PacketDispatcher.Register(0x0768, (Func<Packet, List<Packet>>)OnTeleportSemiLoad);
+            context.PacketDispatcher.Register(0x0D0F, (Func<Packet, List<Packet>>)OnAlmostLoad);
+            context.PacketDispatcher.Register(0x1F03, (Func<Packet, List<Packet>>)OnFullLoad);
         }
     }
 }

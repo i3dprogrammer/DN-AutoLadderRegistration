@@ -10,12 +10,12 @@ namespace AutoLadderRegistration.Packets
 {
     class ServerChecks
     {
-        public static List<Packet> OnEchoCheck(Packet packet)
+        public static Packet OnEchoCheck(Packet packet)
         {
-            return new List<Packet>() { new Packet(0x02, 0x0E, packet.GetBytes()) };
+            return new Packet(0x02, 0x0E, packet.GetBytes());
         }
 
-        public static List<Packet> OnBase64Check(Packet packet)
+        public static Packet OnBase64Check(Packet packet)
         {
             var key = packet.ReadUInt32();
             var data = DNSecurityAPI.Crypto.CustomBase64Decoder.Decode(packet.ReadUInt8Array(0x50), (byte)key);
@@ -23,14 +23,14 @@ namespace AutoLadderRegistration.Packets
             var p = new Packet(0x02, hex, data);
             p.WriteUInt8Array(new byte[20]);
 
-            return new List<Packet>() { p };
+            return p;
         }
 
         public static void RegisterServerChecksDispatches(Context context)
         {
-            context.PacketDispatcher.Register(0x020E, OnEchoCheck, false);
-            context.PacketDispatcher.Register(0x0218, OnBase64Check, false);
-            context.PacketDispatcher.Register(0x0219, OnBase64Check, false);
+            context.PacketDispatcher.Register(0x020E, (Func<Packet, Packet>)OnEchoCheck);
+            context.PacketDispatcher.Register(0x0218, (Func<Packet, Packet>)OnBase64Check);
+            context.PacketDispatcher.Register(0x0219, (Func<Packet, Packet>)OnBase64Check);
         }
     }
 }

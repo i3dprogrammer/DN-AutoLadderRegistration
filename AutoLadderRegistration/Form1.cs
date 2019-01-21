@@ -41,9 +41,11 @@ namespace AutoLadderRegistration
             DNSecurityAPI.Keys.Initialize(LocalKeys.XTEAKey, LocalKeys.UDPCryptoKey, LocalKeys.UDPDecryptKey, LocalKeys.UDPEncryptKey, LocalKeys.CustomeBase64Table);
             Log("Initialized.");
             Log("Loading UIString.");
-            DTO.Resources.UITranslator.LoadUIString("uistring.xml");
-            Log("Loading DNData.");
-            DTO.Resources.ItemTable.LoadItemTable("DNData.txt");
+            //DTO.Resources.UITranslator.LoadUIString("uistring.xml");
+            Log("Loading game tables.");
+            //DTO.Resources.GameTables.LoadItemEntry("ItemTable.txt", DTO.Resources.GameTables.ItemTable);
+            Console.WriteLine(DTO.Resources.GameTables.ItemTable.Count);
+            //DTO.Resources.GameTables.LoadItemEntry("WeaponTable.txt", DTO.Resources.GameTables.WeaponTable);
             Log("Data loaded.");
         }
 
@@ -73,9 +75,9 @@ namespace AutoLadderRegistration
                 return;
             button2.Enabled = false;
 
-            var p = new Packet(0x01, 0x05); //Request channels list
+            var p = new Packet(0x01, 0x06); //Request channels list
             p.WriteUInt32(CharList.ElementAt(cmb_chars.SelectedIndex));
-            p.WriteUInt32Array(new uint[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 });
+            p.WriteUInt32Array(new uint[] { 0x00, 0x00, 0x00, 0x00, 0x00 });
             Clientless.SendTCPPacket(p);
         }
 
@@ -86,10 +88,13 @@ namespace AutoLadderRegistration
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var p = new Packet(0x13, 0x14);
-            p.WriteUInt8(0x10);
-            p.WriteUInt32(0x06);
+            var p = new Packet(0x20, 0x1D);
+            p.WriteUInt8Array(new byte[] { 0xB8, 0x5C, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA9, 0x39, 0x00, 0x00 });
             Clientless.SendTCPPacket(p);
+            //var p = new Packet(0x13, 0x14);
+            //p.WriteUInt8(0x10);
+            //p.WriteUInt32(0x06);
+            //Clientless.SendTCPPacket(p);
         }
     }
 }

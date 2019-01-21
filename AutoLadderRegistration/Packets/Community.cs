@@ -13,11 +13,11 @@ namespace AutoLadderRegistration.Packets
 
         static uint suid = 0;
 
-        public static List<Packet> DispawnCharacter(Packet packet)
+        public static Packet DispawnCharacter(Packet packet)
         {
             var p = new Packet(0x02, 0x11);
             p.WriteUInt32(packet.ReadUInt32());
-            return new List<Packet>() { p };
+            return p;
         }
 
         public static List<Packet> OnCharacterMove(Packet packet)
@@ -51,7 +51,7 @@ namespace AutoLadderRegistration.Packets
             return new List<Packet>();
         }
 
-        public static List<Packet> OnCharacterSpawn(Packet packet)
+        public static void OnCharacterSpawn(Packet packet)
         {
             var uid = packet.ReadUInt32();
             packet.ReadUInt32();
@@ -62,15 +62,13 @@ namespace AutoLadderRegistration.Packets
             {
                 suid = uid;
             }
-
-            return new List<Packet>();
         }
 
         public static void RegisterCommunityDispatches(Context context)
         {
-            context.PacketDispatcher.Register(0x0216, DispawnCharacter, false);
-            context.PacketDispatcher.Register(0x0303, OnCharacterSpawn, false);
-            context.PacketDispatcher.Register(0x0401, OnCharacterMove, false);
+            context.PacketDispatcher.Register(0x0216, (Func<Packet, Packet>)DispawnCharacter);
+            context.PacketDispatcher.Register(0x0303, (Action<Packet>)OnCharacterSpawn);
+            context.PacketDispatcher.Register(0x0401, (Func<Packet, List<Packet>>)OnCharacterMove);
         }
     }
 }

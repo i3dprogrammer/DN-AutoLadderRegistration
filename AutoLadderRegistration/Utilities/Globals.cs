@@ -17,5 +17,6 @@ namespace AutoLadderRegistration.Utilities
         //public static uint CharSessionUniqueID;
         public static Inventory MainCharInventory = new Inventory();
         public static Inventory MainCharStorage = new Inventory();
+        public static Inventory MainProfileItems = new Inventory();
     }
 }

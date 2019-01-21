@@ -10,7 +10,7 @@ namespace AutoLadderRegistration.Packets
 {
     class Character
     {
-        public static List<Packet> OnInventoryItemsList(Packet p)
+        public static void OnInventoryItemsList(Packet p)
         {
             Utilities.Globals.MainCharInventory.Items.Clear();
             byte invSlots = p.ReadUInt8();
@@ -23,11 +23,9 @@ namespace AutoLadderRegistration.Packets
             {
                 Utilities.Globals.MainCharInventory.AddItem(p);
             }
-
-            return new List<Packet>();
         }
 
-        public static List<Packet> OnStorageItemList(Packet p)
+        public static void OnStorageItemList(Packet p)
         {
             Utilities.Globals.MainCharStorage.Items.Clear();
             p.ReadUInt64();
@@ -42,14 +40,31 @@ namespace AutoLadderRegistration.Packets
             {
                 Utilities.Globals.MainCharStorage.AddItem(p);
             }
+        }
 
-            return new List<Packet>();
+        public static void OnProfileItemsList(Packet p)
+        {
+            var t1 = p.ReadUInt16();
+            var t2 = p.ReadUInt16();
+            var t3 = p.ReadUInt16();
+            p.ReadUInt8Array(0x2C);
+
+            Utilities.Globals.MainProfileItems.Items.Clear();
+            for (int i = 0; i < t1; i++) //Face/Hair > equipment
+                Utilities.Globals.MainProfileItems.AddItem(p);
+            Utilities.Globals.MainProfileItems.Items.Clear();
+            for (int i = 0; i < t2; i++) //Heraldry
+                Utilities.Globals.MainProfileItems.AddItem(p);
+            Utilities.Globals.MainProfileItems.Items.Clear();
+            for (int i = 0; i < t3; i++) //Talisman
+                Utilities.Globals.MainProfileItems.AddItem(p);
         }
 
         public static void RegisterCharacterDispatches(Context context)
         {
-            context.PacketDispatcher.Register(Opcodes.STORAGE_ITEMS, OnInventoryItemsList, false);
-            context.PacketDispatcher.Register(Opcodes.INVENTORY_ITEMS, OnInventoryItemsList, false);
+            context.PacketDispatcher.Register(Opcodes.STORAGE_ITEMS_LIST, (Action<Packet>)OnStorageItemList);
+            context.PacketDispatcher.Register(Opcodes.INVENTORY_ITEMS_LIST, (Action<Packet>)OnInventoryItemsList);
+            context.PacketDispatcher.Register(Opcodes.PROFILE_ITEMS_LIST, (Action<Packet>)OnProfileItemsList);
         }
     }
 }
