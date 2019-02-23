@@ -49,6 +49,8 @@ namespace AutoLadderRegistration.Packets
             var t3 = p.ReadUInt16();
             p.ReadUInt8Array(0x2C);
 
+            //Create a good inventory class to handle this.
+            return;
             Utilities.Globals.MainProfileItems.Items.Clear();
             for (int i = 0; i < t1; i++) //Face/Hair > equipment
                 Utilities.Globals.MainProfileItems.AddItem(p);
