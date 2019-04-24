@@ -88,7 +88,7 @@
             this.txt_username.Name = "txt_username";
             this.txt_username.Size = new System.Drawing.Size(168, 20);
             this.txt_username.TabIndex = 3;
-            this.txt_username.Text = "bluehand1996";
+            this.txt_username.Text = "";
             // 
             // txt_pw
             // 
@@ -97,7 +97,7 @@
             this.txt_pw.Name = "txt_pw";
             this.txt_pw.Size = new System.Drawing.Size(168, 20);
             this.txt_pw.TabIndex = 4;
-            this.txt_pw.Text = "555555@qQ";
+            this.txt_pw.Text = "";
             // 
             // label3
             // 
